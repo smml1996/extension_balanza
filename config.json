@@ -1,0 +1,4 @@
+{
+        "baudios": 9400,
+        "port": "/dev/tty.debug-console"
+    }

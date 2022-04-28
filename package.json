@@ -1,0 +1,23 @@
+{
+  "name": "balanza_extension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "stefanie muroya",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "serialport": "^9.0.7"
+  },
+  "pkg": {
+    "scripts": ["/static/js/init.js", "/static/js/jquery.js", "/static/js/materialize.js", "/static/js/materialize.min.js"],
+    "assets": [
+      "index.html",
+      "/static/**/*"
+    ]
+  }
+}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Extensión Balanza</title>
+
+  <!-- CSS  -->
+  <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  <nav class="white" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo">
+        <img style="max-height: 8vh; width:auto;" src="/logo.png">
+      </a>
+      <!--<ul class="right hide-on-med-and-down">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="sidenav">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+      <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>-->
+    </div>
+  </nav>
+
+  <div id="index-banner" class="parallax-container">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <br><br>
+        <div style='height:8vh;'></div>
+        <h1 class="header center white-text">Extensión Balanza Camionera</h1>
+        <br><br>
+
+        <!-- 
+        <div class="row center">
+          <a href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">Get Started</a>
+        </div>-->
+        
+
+      </div>
+    </div>
+    <div class="parallax"><img src="/fondo_mineria.jpeg" alt="Unsplashed background img 1"></div>
+  </div>
+
+
+  <div class="container">
+    <div class="progress" >
+      <div class="indeterminate"></div>
+    </div>
+    <div class="section">
+
+      
+      <div class="row">
+        <div class="input-field col s4">
+          <select id="puertos-seriales">
+            <option value="-1" disabled selected>Choose your option</option>
+          </select>
+          <label>Escoge un Puerto Serial</label>
+        </div>
+
+        <div class="input-field col s4">
+          <input id="baudios" type="number" class="validate">
+          <label for="baudios">Tasa de Baudios</label>
+        </div>
+
+        <div class="input-field col s3">
+          <a class="waves-effect waves-light btn" onclick="update_config();">Establecer Configuración</a>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col s4 m4">
+          <button class="waves-effect waves-light btn-large" onclick="leer_data();">Probar Recepción de datos</button>
+        </div>
+        <div class="col s5 m5">
+          <div class="card-panel teal">
+            <span class="white-text" id="result-prueba">
+              <u>Resultado: </u>
+            </span>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!--  Scripts-->
+  <script src="js/jquery.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/init.js"></script>
+  <script>
+
+    function update_ports(){
+        $('.progress').show();
+        var settings = {
+            "url": "/get-serial-ports",
+            "method": "GET",
+            "timeout": 0,
+        };
+
+        $.ajax(settings).done(function (response) {
+              var ports = response.ports;
+            
+              $('#puertos-seriales').empty();
+              for (const port of ports) {
+                $('#puertos-seriales').append(`<option value='${port}'>${port}</option>`);
+              }
+              $('select').formSelect();
+              $('.progress').hide();
+        });
+    
+          
+    }
+
+    function update_config(){
+        $('.progress').show();
+        var baudios = $('#baudios').val();
+        var port = $('#puertos-seriales').val();
+        var settings = {
+            "url": `/update-config?baudios=${baudios}&port=${port}`,
+            "method": "GET",
+            "timeout": 0,
+        };
+
+        $.ajax(settings).done(function (response) {
+              $('.progress').hide();
+        });    
+    }
+
+    function get_config(){
+      $('.progress').show();
+        var settings = {
+            "url": `/get-config`,
+            "method": "GET",
+            "timeout": 0,
+        };
+
+        $.ajax(settings).done(function (response) {
+          console.log(response);
+            $('#baudios').val(response.baudios);
+            $('#puertos-seriales').val(response.port);
+            $('.progress').hide();
+        });   
+    }
+
+    function leer_data(){
+        $('.progress').show();
+
+        var settings = {
+            "url": `/read-data`,
+            "method": "GET",
+            "timeout": 0,
+        };
+
+        $.ajax(settings).done(function (response) {
+            $('#result-prueba').empty();
+            $('#result-prueba').html(`<u>Resultado: </u> ${response.data}`);
+        }); 
+    }
+
+    $(document).ready(function(){
+      $('select').formSelect();
+        update_ports();
+        $('.progress').hide();
+        get_config()
+    });
+  </script>
+
+  </body>
+</html>
